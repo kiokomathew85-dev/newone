@@ -1,5 +1,5 @@
 class Diagnosis:
-      def __init__(self,session_id,patient_id,doctor_id,symptoms,disease,prevention,medication):
+      def __init__(self,session_id,patient_id,doctor_id):
       self.session_id=session_id
       self.patient_id=patient_id
       self.doctor_id=doctor_id
@@ -24,7 +24,8 @@ class Diagnosis:
             print(f"{index}. {disease['name']}")
         try:
             choice = int(input("\nSelect the matching disease number: "))
-            if choice 1<=choice<=len(matches):
+            if 1<=choice<=len(matches):
+                selected_disease = matches[choice -1]
                 self.disease= selected_disease["name"]
                 self.prevention=selected_disease["prevention"]
                 self.medication= selected_disease["medication"]
@@ -43,7 +44,7 @@ class Diagnosis:
         """Display a summary of the current session details"""
         print("\n"+"="*40)
         print(f"DIAGNOSIS SUMMARY (Session: {self.session_id})")
-        print(f""="*40) 
+        print("="*40) 
         print(f"Patient ID: {self.patient_id}") 
         print(f"Doctor ID: {self.doctor_id}") 
         print(f"Symptom: {self.symptoms}") 
