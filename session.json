@@ -40,5 +40,71 @@
         "notes": [],
         "start_time": null,
         "end_time": null
+    },
+    "6d75912c-77a5-4492-9e75-9a9e24e6d14c": {
+        "session_id": "6d75912c-77a5-4492-9e75-9a9e24e6d14c",
+        "patient_id": "P001",
+        "doctor_id": "D101",
+        "diagnosis": "Hypertension",
+        "status": "scheduled",
+        "date_time": "2026-06-15 17:49:08",
+        "notes": [],
+        "start_time": null,
+        "end_time": null
+    },
+    "1869e6c9-d5fa-4b0b-b0a1-9eb70192b22f": {
+        "session_id": "1869e6c9-d5fa-4b0b-b0a1-9eb70192b22f",
+        "patient_id": "P002",
+        "doctor_id": "D101",
+        "diagnosis": "Diabetes",
+        "status": "scheduled",
+        "date_time": "2026-06-15 17:49:08",
+        "notes": [],
+        "start_time": null,
+        "end_time": null
+    },
+    "8ddb9813-ceb6-492e-b424-6fb356a69fec": {
+        "session_id": "8ddb9813-ceb6-492e-b424-6fb356a69fec",
+        "patient_id": "P001",
+        "doctor_id": "D202",
+        "diagnosis": "Flu",
+        "status": "scheduled",
+        "date_time": "2026-06-15 17:49:08",
+        "notes": [],
+        "start_time": null,
+        "end_time": null
+    },
+    "44fa7f89-54d9-4fa7-9d4c-e42721991bc7": {
+        "session_id": "44fa7f89-54d9-4fa7-9d4c-e42721991bc7",
+        "patient_id": "P001",
+        "doctor_id": "D101",
+        "diagnosis": "Hypertension",
+        "status": "scheduled",
+        "date_time": "2026-06-15 17:49:23",
+        "notes": [],
+        "start_time": null,
+        "end_time": null
+    },
+    "ab439c36-76df-489c-9563-13875c657491": {
+        "session_id": "ab439c36-76df-489c-9563-13875c657491",
+        "patient_id": "P002",
+        "doctor_id": "D101",
+        "diagnosis": "Diabetes",
+        "status": "scheduled",
+        "date_time": "2026-06-15 17:49:23",
+        "notes": [],
+        "start_time": null,
+        "end_time": null
+    },
+    "000e93ec-754a-44c3-8241-98212cd1c218": {
+        "session_id": "000e93ec-754a-44c3-8241-98212cd1c218",
+        "patient_id": "P001",
+        "doctor_id": "D202",
+        "diagnosis": "Flu",
+        "status": "scheduled",
+        "date_time": "2026-06-15 17:49:23",
+        "notes": [],
+        "start_time": null,
+        "end_time": null
     }
 }

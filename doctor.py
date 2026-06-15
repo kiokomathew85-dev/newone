@@ -1,11 +1,20 @@
 import functools
 import getpass
 import json
+import os
 import sys
 from datetime import datetime
 
 from patient import Patient, PatientDeleter
 from storage import StorageEngine
+
+
+def prompt_secret(prompt_text):
+    try:
+        return getpass.getpass(prompt_text)
+    except Exception:
+        print("\n[!] Secure password entry unavailable. Input will be visible.")
+        return input(prompt_text)
 
 
 def require_doctor_privileges(func):
@@ -42,6 +51,8 @@ class User:
 
 
 class Doctor(User):
+    DOCTORS_FILE = "doctors.json"
+
     def __init__(self, name, doctor_id, password):
         super().__init__(username=name, user_id=doctor_id, password=password, role="Admin")
 
@@ -52,6 +63,18 @@ class Doctor(User):
     @property
     def doctor_id(self):
         return self.user_id
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "doctor_id": self.doctor_id,
+            "password": self._password,
+            "role": self.role,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["name"], data["doctor_id"], data["password"])
 
     @require_doctor_privileges
     def view_patient_history(self, patient_id):
@@ -116,27 +139,99 @@ def authenticate_doctor(doctors, doctor_id, password):
     return None
 
 
+def load_doctors():
+    if not os.path.exists(Doctor.DOCTORS_FILE):
+        return []
+
+    try:
+        with open(Doctor.DOCTORS_FILE, "r") as file:
+            data = json.load(file)
+        return [Doctor.from_dict(item) for item in data]
+    except (json.JSONDecodeError, IOError):
+        return []
+
+
+def save_doctors(doctors):
+    try:
+        with open(Doctor.DOCTORS_FILE, "w") as file:
+            json.dump([doctor.to_dict() for doctor in doctors], file, indent=4)
+    except IOError as e:
+        print(f"[!] Error saving doctors: {e}")
+
+
+def doctor_exists(doctors, doctor_id):
+    return any(doctor.doctor_id == doctor_id for doctor in doctors)
+
+
+def register_doctor(doctors):
+    print("\n=== New Doctor Registration ===")
+    while True:
+        name = input("Doctor name: ").strip()
+        doctor_id = input("Choose Doctor ID: ").strip()
+
+        if not name or not doctor_id:
+            print("[!] Name and Doctor ID cannot be blank.")
+            continue
+
+        if doctor_exists(doctors, doctor_id):
+            print(f"[!] Doctor ID '{doctor_id}' is already in use. Please choose another.")
+            continue
+
+        password = prompt_secret("Choose Secret Password: ")
+        password_confirm = prompt_secret("Confirm Secret Password: ")
+
+        if password != password_confirm:
+            print("[!] Passwords do not match. Try again.")
+            continue
+
+        if not password:
+            print("[!] Password cannot be blank.")
+            continue
+
+        new_doctor = Doctor(name, doctor_id, password)
+        doctors.append(new_doctor)
+        save_doctors(doctors)
+        print(f"\n[+] Registration successful. Welcome, Dr. {new_doctor.name}!")
+        return new_doctor
+
+
 def doctor_login_form(doctors):
     print("=" * 45)
     print("       CLINIC MANAGEMENT SYSTEM LOGIN        ")
     print("=" * 45)
 
-    attempts = 3
-    while attempts > 0:
-        print(f"\n[Remaining Login Attempts: {attempts}]")
-        doc_id = input("Enter Doctor ID: ").strip()
-        password = getpass.getpass("Enter Secret Password: ")
+    while True:
+        print("\n1. Existing doctor login")
+        print("2. Register a new doctor")
+        print("3. Quit")
+        choice = input("Select an option: ").strip()
 
-        doctor_session = authenticate_doctor(doctors, doc_id, password)
-        if doctor_session:
-            print(f"\n[+] Access Granted. Welcome, Dr. {doctor_session.name}!")
-            return doctor_session
+        if choice == "1":
+            attempts = 3
+            while attempts > 0:
+                print(f"\n[Remaining Login Attempts: {attempts}]")
+                doc_id = input("Enter Doctor ID: ").strip()
+                password = prompt_secret("Enter Secret Password: ")
 
-        print("[!] Invalid Doctor ID or password.")
-        attempts -= 1
+                doctor_session = authenticate_doctor(doctors, doc_id, password)
+                if doctor_session:
+                    print(f"\n[+] Access Granted. Welcome, Dr. {doctor_session.name}!")
+                    return doctor_session
 
-    print("\n[!!!] Maximum authentication attempts reached. Exiting program.")
-    sys.exit(1)
+                print("[!] Invalid Doctor ID or password.")
+                attempts -= 1
+
+            print("\n[!!!] Maximum authentication attempts reached. Returning to the main menu.")
+
+        elif choice == "2":
+            return register_doctor(doctors)
+
+        elif choice == "3":
+            print("Goodbye.")
+            sys.exit(0)
+
+        else:
+            print("[!] Invalid selection. Please choose 1, 2, or 3.")
 
 
 def display_doctor_menu():
@@ -247,10 +342,14 @@ def run_doctor_cli(doctor):
 
 
 if __name__ == "__main__":
-    doctors = [
-        Doctor("Alice Mwenda", "D101", "docpass"),
-        Doctor("Brian Karanja", "D202", "secure123"),
-    ]
+    doctors = load_doctors()
+
+    if not doctors:
+        doctors = [
+            Doctor("Alice Mwenda", "D101", "docpass"),
+            Doctor("Brian Karanja", "D202", "secure123"),
+        ]
+        save_doctors(doctors)
 
     doctor = doctor_login_form(doctors)
     run_doctor_cli(doctor)
