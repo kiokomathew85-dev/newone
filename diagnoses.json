@@ -11,5 +11,31 @@
         "disease": "Common Cold",
         "prevention": "Wash hands frequently, avoid sick people.",
         "medication": "Rest, fluids, Paracetamol"
+    },
+    "306ef3f4-ded4-4b12-8ca8-476d3f472d64": {
+        "session_id": "306ef3f4-ded4-4b12-8ca8-476d3f472d64",
+        "patient_id": "P-7F315F",
+        "doctor_id": "4567",
+        "symptoms": [
+            "fever",
+            "body ache",
+            "cough"
+        ],
+        "disease": "Malaria",
+        "prevention": "Use mosquito nets, insect repellent, antimalarial drugs.",
+        "medication": "Artemether-Lumefantrine, Chloroquine"
+    },
+    "094c2d78-93a7-46b7-8dae-2ecf009b1442": {
+        "session_id": "094c2d78-93a7-46b7-8dae-2ecf009b1442",
+        "patient_id": "P-7F315F",
+        "doctor_id": "4567",
+        "symptoms": [
+            "headache",
+            "fever",
+            "night sweat"
+        ],
+        "disease": "Malaria",
+        "prevention": "Use mosquito nets, insect repellent, antimalarial drugs.",
+        "medication": "Artemether-Lumefantrine, Chloroquine"
     }
 }

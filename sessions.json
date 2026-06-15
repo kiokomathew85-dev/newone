@@ -9,5 +9,38 @@
         "notes": "fhfhfh",
         "start_time": "2026-06-15 09:58:31",
         "end_time": "2026-06-15 09:59:05"
+    },
+    "306ef3f4-ded4-4b12-8ca8-476d3f472d64": {
+        "session_id": "306ef3f4-ded4-4b12-8ca8-476d3f472d64",
+        "patient_id": "P-7F315F",
+        "doctor_id": "4567",
+        "diagnosis": "Malaria",
+        "status": "completed",
+        "date_time": "2026-06-15 10:15:50",
+        "notes": "patient is very ill",
+        "start_time": "2026-06-15 10:15:50",
+        "end_time": "2026-06-15 10:16:55"
+    },
+    "53353eb3-ce33-45b6-8b5c-19b4cf6b7adb": {
+        "session_id": "53353eb3-ce33-45b6-8b5c-19b4cf6b7adb",
+        "patient_id": "P-7F315F",
+        "doctor_id": "4567",
+        "diagnosis": "",
+        "status": "in-progress",
+        "date_time": "2026-06-15 10:20:43",
+        "notes": "",
+        "start_time": "2026-06-15 10:20:43",
+        "end_time": ""
+    },
+    "094c2d78-93a7-46b7-8dae-2ecf009b1442": {
+        "session_id": "094c2d78-93a7-46b7-8dae-2ecf009b1442",
+        "patient_id": "P-7F315F",
+        "doctor_id": "4567",
+        "diagnosis": "Malaria",
+        "status": "completed",
+        "date_time": "2026-06-15 10:31:55",
+        "notes": "patient had terrible headache",
+        "start_time": "2026-06-15 10:31:55",
+        "end_time": "2026-06-15 10:33:06"
     }
 }
