@@ -42,13 +42,5 @@ class Session:
         }
 
     def save(self):
-        # load existing sessions
-        sessions = {}
-        if os.path.exists("sessions.json"):
-            with open("sessions.json", "r") as f:
-                sessions = json.load(f)
-
-        sessions[self.session_id] = self.to_dict()
-
-        with open("sessions.json", "w") as f:
-            json.dump(sessions, f, indent=4)
+        import storage
+        storage.save_session(self.to_dict())
