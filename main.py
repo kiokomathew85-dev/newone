@@ -261,7 +261,47 @@ def update_patient(doctor):
 
 
 # ============================================================
-# MENU 5 - UPDATE DOCTOR DETAILS
+# MENU 5 - DELETE PATIENT
+# ============================================================
+
+def delete_patient_ui(doctor):
+    print("\n--- DELETE PATIENT record ---")
+    
+    patients = storage.get_all_patients()
+    if len(patients) == 0:
+        print("No patients found.")
+        return
+
+    print("\nSelect a patient to delete:")
+    for i, p in enumerate(patients, 1):
+        print(f"{i}. {p.name} (ID: {p.patient_id})")
+
+    try:
+        choice = int(input("\nEnter number to delete (or 0 to cancel): "))
+        if choice == 0:
+            return
+        if choice < 1 or choice > len(patients):
+            print("Invalid choice.")
+            return
+    except ValueError:
+        print("Please enter a valid number.")
+        return
+
+    patient = patients[choice - 1]
+    
+    confirm = input(f"Are you sure you want to delete {patient.name} (ID: {patient.patient_id})? (y/n): ").lower().strip()
+    if confirm == 'y':
+        from patient import PatientDeleter
+        if PatientDeleter.delete_patient(patient.patient_id):
+            print(f"Patient {patient.name} deleted successfully.")
+        else:
+            print("Failed to delete patient.")
+    else:
+        print("Deletion cancelled.")
+
+
+# ============================================================
+# MENU 6 - UPDATE DOCTOR DETAILS
 # ============================================================
 
 def update_doctor_details(doctor):
@@ -297,8 +337,9 @@ def main_menu(doctor):
         print("2. Create Patient")
         print("3. View Patient History")
         print("4. Update Patient Details")
-        print("5. Update My Details")
-        print("6. Logout")
+        print("5. Delete Patient Record")
+        print("6. Update My Details")
+        print("7. Logout")
 
         choice = input("\nChoose an option: ").strip()
 
@@ -311,15 +352,17 @@ def main_menu(doctor):
         elif choice == "4":
             update_patient(doctor)
         elif choice == "5":
+            delete_patient_ui(doctor)
+        elif choice == "6":
             result = update_doctor_details(doctor)
             if result == "logout":
                 print("Please log in again with your new password.")
                 return
-        elif choice == "6":
+        elif choice == "7":
             print(f"\nLogging out. Goodbye Dr. {doctor.name}!")
             return
         else:
-            print("Please enter a number between 1 and 6.")
+            print("Please enter a number between 1 and 7.")
 
 
 # ============================================================
