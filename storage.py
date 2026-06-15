@@ -130,6 +130,16 @@ def search_patients_by_name(name):
             results.append(p)
     return results
 
+def delete_patient(patient_id):
+    patients = load_json(PATIENTS_FILE)
+    if patient_id in patients:
+        del patients[patient_id]
+        save_json(PATIENTS_FILE, patients)
+        print(f"Patient with ID {patient_id} has been deleted.")
+        return True
+    print(f"Patient with ID {patient_id} not found.")
+    return False
+
 
 # ---- Diagnosis functions ----
 

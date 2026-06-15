@@ -18,3 +18,12 @@ class Patient:
             "height": self.height,
             "weight": self.weight
         }
+
+class PatientDeleter:
+    """
+    A class specifically designed to handle the deletion of patient records.
+    """
+    @staticmethod
+    def delete_patient(patient_id):
+        import storage
+        return storage.delete_patient(patient_id)
