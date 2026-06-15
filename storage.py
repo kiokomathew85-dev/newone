@@ -1,13 +1,13 @@
 import json
 import os
 class StorageEngine:
-    def __init__(self, kb_path="data/knowledge_base.json", diagnosis_path="data/diagnosis.json"):
+    def __init__(self, kb_path="knowledge_base.json", diagnosis_path="diagnosis.json"):
         self.kb_path =kb_path# the kb is a variable representing knowledge_bae
         self.diagnosis_path= diagnosis_path
 
     def load_knowledge_base(self):
         if not os.path.exists(self.kb_path):
-            print(f"[!] Warning: Knowlegde base file not found at {self.kb_path}")
+            print(f"[!] Warning: Knowledge base file not found at {self.kb_path}")
             return{"diseases":[]}
         try:
             with open(self.kb_path,"r") as file:
