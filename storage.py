@@ -130,6 +130,16 @@ def search_patients_by_name(name):
             results.append(p)
     return results
 
+def delete_patient(patient_id):
+    patients = load_json(PATIENTS_FILE)
+    if patient_id in patients:
+        del patients[patient_id]
+        save_json(PATIENTS_FILE, patients)
+        print(f"Patient with ID {patient_id} has been deleted.")
+        return True
+    print(f"Patient with ID {patient_id} not found.")
+    return False
+
 
 # ---- Diagnosis functions ----
 
@@ -149,13 +159,41 @@ def get_patient_diagnoses(patient_id):
 
 # ---- Session functions ----
 
+def save_session(session_dict):
+    sessions = load_json("sessions.json")
+    sessions[session_dict["session_id"]] = session_dict
+    save_json("sessions.json", sessions)
+
 def get_patient_sessions(patient_id):
-    if not os.path.exists("sessions.json"):
-        return []
-    with open("sessions.json", "r") as f:
-        sessions = json.load(f)
+    sessions = load_json("sessions.json")
     results = []
     for s in sessions.values():
         if s["patient_id"] == patient_id:
             results.append(s)
     return results
+
+def delete_patient(patient_id):
+    """Delete patient and all their associated sessions and diagnoses."""
+    # 1. Delete patient
+    patients = load_json(PATIENTS_FILE)
+    if patient_id not in patients:
+        print(f"Patient with ID {patient_id} not found.")
+        return False
+    
+    del patients[patient_id]
+    save_json(PATIENTS_FILE, patients)
+
+    # 2. Cascade delete diagnoses
+    diagnoses = load_json(DIAGNOSES_FILE)
+    new_diagnoses = {sid: d for sid, d in diagnoses.items() if d["patient_id"] != patient_id}
+    if len(new_diagnoses) < len(diagnoses):
+        save_json(DIAGNOSES_FILE, new_diagnoses)
+
+    # 3. Cascade delete sessions
+    sessions = load_json("sessions.json")
+    new_sessions = {sid: s for sid, s in sessions.items() if s["patient_id"] != patient_id}
+    if len(new_sessions) < len(sessions):
+        save_json("sessions.json", new_sessions)
+
+    print(f"Patient record {patient_id} and all history have been deleted.")
+    return True
