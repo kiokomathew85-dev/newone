@@ -1,0 +1,15 @@
+{
+    "233fd721-d59d-481a-9fba-1815103d3028": {
+        "session_id": "233fd721-d59d-481a-9fba-1815103d3028",
+        "patient_id": "P-7F315F",
+        "doctor_id": "647",
+        "symptoms": [
+            "cough",
+            "fever",
+            "body ache"
+        ],
+        "disease": "Common Cold",
+        "prevention": "Wash hands frequently, avoid sick people.",
+        "medication": "Rest, fluids, Paracetamol"
+    }
+}
