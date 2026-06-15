@@ -1,161 +1,55 @@
 import json
 import os
-from patient import Patient
-from doctor import Doctor
+class StorageEngine:
+    def __init__(self, kb_path="data/knowledge_base.json", diagnosis_path="data/diagnosis.json"):
+        self.kb_path =kb_path# the kb is a variable representing knowledge_bae
+        self.diagnosis_path= diagnosis_path
 
-DOCTORS_FILE = "doctors.json"
-PATIENTS_FILE = "patients.json"
-DIAGNOSES_FILE = "diagnoses.json"
+    def load_knowledge_base(self):
+        if not os.path.exists(self.kb_path):
+            print(f"[!] Warning: Knowlegde base file not found at {self.kb_path}")
+            return{"diseases":[]}
+        try:
+            with open(self.kb_path,"r") as file:
+                return json.load(file)
+        except json.JSONDecodeError:
+            print("[!] Error: Malformed JSON data in knowledge base file.")
+            return {"diseases":[]}
+             
+    def search_diseases_by_symptom(self, symptom_query):
+        query= symptom_query.strip().lower()# the strip cleans the whitespace
+        matches=[]
 
+        kb_data=self.load_knowledge_base()
+        diseases=kb_data.get("diseases",[])  
 
-# ---- helper functions to load and save json files ----
+        for disease in diseases:
+            symptoms_lowercase=[s.lower() for s in disease.get("symptoms",[])]
+            if any(query in symptom for symptom in symptoms_lowercase):
+                matches.append(disease)
+        return matches
 
-def load_json(filename):
-    if not os.path.exists(filename):
-        return {}
-    with open(filename, "r") as f:
-        return json.load(f)
-
-def save_json(filename, data):
-    with open(filename, "w") as f:
-        json.dump(data, f, indent=4)
-
-
-# ---- Doctor functions ----
-
-def register_doctor(name, doctor_id, password):
-    doctors = load_json(DOCTORS_FILE)
-
-    if doctor_id in doctors:
-        print("A doctor with that ID already exists.")
-        return None
-
-    doctors[doctor_id] = {
-        "name": name,
-        "doctor_id": doctor_id,
-        "password": password
-    }
-    save_json(DOCTORS_FILE, doctors)
-    print("Account created successfully!")
-    return Doctor(name, doctor_id, password)
-
-def login_doctor(doctor_id, password):
-    doctors = load_json(DOCTORS_FILE)
-
-    if doctor_id not in doctors:
-        return None
-
-    record = doctors[doctor_id]
-    if record["password"] == password:
-        return Doctor(record["name"], doctor_id, record["password"])
-    return None
-
-def update_doctor(doctor_id, new_name, new_password):
-    doctors = load_json(DOCTORS_FILE)
-    if doctor_id not in doctors:
-        print("Doctor not found.")
-        return
-
-    if new_name != "":
-        doctors[doctor_id]["name"] = new_name
-    if new_password != "":
-        doctors[doctor_id]["password"] = new_password
-
-    save_json(DOCTORS_FILE, doctors)
-    print("Your details have been updated.")
-
-
-# ---- Patient functions ----
-
-def save_patient(patient):
-    patients = load_json(PATIENTS_FILE)
-    patients[patient.patient_id] = patient.to_dict()
-    save_json(PATIENTS_FILE, patients)
-
-def get_all_patients():
-    patients = load_json(PATIENTS_FILE)
-    result = []
-    for data in patients.values():
-        p = Patient(
-            name=data["name"],
-            phone_number=data["phone_number"],
-            date_of_birth=data["date_of_birth"],
-            height=data.get("height", ""),
-            weight=data.get("weight", "")
-        )
-        p.patient_id = data["patient_id"]
-        result.append(p)
-    return result
-
-def get_patient_by_id(patient_id):
-    patients = load_json(PATIENTS_FILE)
-    if patient_id in patients:
-        data = patients[patient_id]
-        p = Patient(
-            name=data["name"],
-            phone_number=data["phone_number"],
-            date_of_birth=data["date_of_birth"],
-            height=data.get("height", ""),
-            weight=data.get("weight", "")
-        )
-        p.patient_id = data["patient_id"]
-        return p
-    return None
-
-def update_patient(patient_id, new_name, new_phone, new_dob, new_height, new_weight):
-    patients = load_json(PATIENTS_FILE)
-    if patient_id not in patients:
-        print("Patient not found.")
-        return
-
-    if new_name != "":
-        patients[patient_id]["name"] = new_name
-    if new_phone != "":
-        patients[patient_id]["phone_number"] = new_phone
-    if new_dob != "":
-        patients[patient_id]["date_of_birth"] = new_dob
-    if new_height != "":
-        patients[patient_id]["height"] = new_height
-    if new_weight != "":
-        patients[patient_id]["weight"] = new_weight
-
-    save_json(PATIENTS_FILE, patients)
-    print("Patient details updated.")
-
-def search_patients_by_name(name):
-    all_patients = get_all_patients()
-    results = []
-    for p in all_patients:
-        if name.lower() in p.name.lower():
-            results.append(p)
-    return results
-
-
-# ---- Diagnosis functions ----
-
-def save_diagnosis(diagnosis_dict):
-    diagnoses = load_json(DIAGNOSES_FILE)
-    diagnoses[diagnosis_dict["session_id"]] = diagnosis_dict
-    save_json(DIAGNOSES_FILE, diagnoses)
-
-def get_patient_diagnoses(patient_id):
-    diagnoses = load_json(DIAGNOSES_FILE)
-    results = []
-    for d in diagnoses.values():
-        if d["patient_id"] == patient_id:
-            results.append(d)
-    return results
-
-
-# ---- Session functions ----
-
-def get_patient_sessions(patient_id):
-    if not os.path.exists("sessions.json"):
-        return []
-    with open("sessions.json", "r") as f:
-        sessions = json.load(f)
-    results = []
-    for s in sessions.values():
-        if s["patient_id"] == patient_id:
-            results.append(s)
-    return results
+    def save_diagnosis(self,diagnosis_data):
+        # Read existing records 
+        records = []
+        if os.path.exists(self.diagnosis_path):
+            try:
+                with open(self.diagnosis_path,"r") as file:
+                    records = json.load(file)
+                    if not isinstance(records,list):
+                        records=[]
+            except (json.JSONDecodeError, IOError):
+                records=[]
+                # Appends the new diagnostic record            
+        records.append(diagnosis_data)
+        # Write the updated history back to the file
+        try:
+            with open(self.diagnosis_path,"w") as file:
+                json.dump(records,file,indent=4)
+                return True
+        except IOError as e:
+            print(f"[!] File Write Error: Could not save diagnosis history. Details: {e}") 
+            return False    
+    def load_patient(self, patient_id):
+        """Placeholder method to satisfy Doctor class requirements.In a full implementation, this reads patient profile details from a file"""
+        return None    
