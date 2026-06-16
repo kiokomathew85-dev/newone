@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class Session:
-    STORAGE_FILE = "session.json"
+    STORAGE_FILE = os.path.join("data", "session.json")
 
     def __init__(self, patient_id, doctor_id, diagnosis="", date_time=None):
         self.session_id = str(uuid.uuid4())
@@ -31,9 +31,16 @@ class Session:
             except json.JSONDecodeError:
                 return {}
 
+    @classmethod
+    def _ensure_storage_dir(cls):
+        dir_name = os.path.dirname(cls.STORAGE_FILE)
+        if dir_name and not os.path.exists(dir_name):
+            os.makedirs(dir_name, exist_ok=True)
+
     def _save_to_json(self):
         
         all_sessions = self._load_all()
+        self._ensure_storage_dir()
         all_sessions[self.session_id] = self._to_dict()
         with open(self.STORAGE_FILE, "w") as f:
             json.dump(all_sessions, f, indent=4)

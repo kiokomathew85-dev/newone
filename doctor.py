@@ -1,7 +1,9 @@
 import functools
 import getpass
+import hashlib
 import json
 import os
+import secrets
 import sys
 from datetime import datetime
 
@@ -10,6 +12,10 @@ from storage import StorageEngine
 
 
 def prompt_secret(prompt_text):
+    if not sys.stdin.isatty() or not sys.stdout.isatty():
+        print("\n[!] Secure password entry unavailable in this environment. Input will be visible.")
+        return input(prompt_text)
+
     try:
         return getpass.getpass(prompt_text)
     except Exception:
@@ -28,11 +34,11 @@ def require_doctor_privileges(func):
 
 
 class User:
-    def __init__(self, username, user_id, password, role):
+    def __init__(self, username, user_id, password, role, password_is_hashed=False):
         self._username = username
         self._user_id = user_id
-        self._password = password
         self._role = role
+        self._password = password if password_is_hashed else self.hash_password(password)
 
     @property
     def username(self):
@@ -46,15 +52,30 @@ class User:
     def role(self):
         return self._role
 
+    @staticmethod
+    def hash_password(password):
+        salt = secrets.token_hex(16)
+        digest = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+        return f"{salt}${digest}"
+
+    @staticmethod
+    def verify_password(stored_password, password_input):
+        try:
+            salt, stored_hash = stored_password.split("$", 1)
+        except ValueError:
+            return False
+        digest = hashlib.sha256((salt + password_input).encode("utf-8")).hexdigest()
+        return secrets.compare_digest(digest, stored_hash)
+
     def check_password(self, password_input):
-        return self._password == password_input
+        return self.verify_password(self._password, password_input)
 
 
 class Doctor(User):
-    DOCTORS_FILE = "doctors.json"
+    DOCTORS_FILE = os.path.join("data", "doctors.json")
 
-    def __init__(self, name, doctor_id, password):
-        super().__init__(username=name, user_id=doctor_id, password=password, role="Admin")
+    def __init__(self, name, doctor_id, password, password_is_hashed=False):
+        super().__init__(username=name, user_id=doctor_id, password=password, role="Admin", password_is_hashed=password_is_hashed)
 
     @property
     def name(self):
@@ -74,7 +95,7 @@ class Doctor(User):
 
     @classmethod
     def from_dict(cls, data):
-        return cls(data["name"], data["doctor_id"], data["password"])
+        return cls(data["name"], data["doctor_id"], data["password"], password_is_hashed=True)
 
     @require_doctor_privileges
     def view_patient_history(self, patient_id):
@@ -140,6 +161,10 @@ def authenticate_doctor(doctors, doctor_id, password):
 
 
 def load_doctors():
+    data_dir = os.path.dirname(Doctor.DOCTORS_FILE)
+    if data_dir:
+        os.makedirs(data_dir, exist_ok=True)
+
     if not os.path.exists(Doctor.DOCTORS_FILE):
         return []
 
@@ -152,6 +177,10 @@ def load_doctors():
 
 
 def save_doctors(doctors):
+    data_dir = os.path.dirname(Doctor.DOCTORS_FILE)
+    if data_dir:
+        os.makedirs(data_dir, exist_ok=True)
+
     try:
         with open(Doctor.DOCTORS_FILE, "w") as file:
             json.dump([doctor.to_dict() for doctor in doctors], file, indent=4)

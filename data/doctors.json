@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Alice Mwenda",
+        "doctor_id": "D101",
+        "password": "ca01d03354d2559be49aa2074824cfca$c14b4b729d796ca45d444d9f9ba33c8a5fe831a7308967393e506cab46202d3e",
+        "role": "Admin"
+    },
+    {
+        "name": "Brian Karanja",
+        "doctor_id": "D202",
+        "password": "b63390c4357346b88ff11e2ec225ea67$1fb66739fb02ca629b8d334fc000a8a2a4ab9bb0ab71608f6c9b2ecbf8723363",
+        "role": "Admin"
+    },
+    {
+        "name": "looko",
+        "doctor_id": "455w",
+        "password": "8d42ddc0a9143af247ace0cc26cc7250$50271770686da22bacf6b074af3030c546cd6b0b2184deacdd346be1965c5b70",
+        "role": "Admin"
+    },
+    {
+        "name": "kilo",
+        "doctor_id": "kop00",
+        "password": "fa231e677ae6136b470f3dfca9616890$58a970ac667638faab6b0ae774a52e825d5ec06582bc0ed8a4e9b908dd285028",
+        "role": "Admin"
+    },
+    {
+        "name": "angel",
+        "doctor_id": "1e23",
+        "password": "b4f0c76f0d9b6635d23cc973f8631c84$e93001763e3cb9dd7d6f87f97d4b57160014bb6fa4e4d9084d57927185eacf2f",
+        "role": "Admin"
+    }
+]

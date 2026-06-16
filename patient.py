@@ -9,7 +9,7 @@ class Patient:
     Handles patient data management and persistence using a JSON file.
     """
     
-    FILE_PATH = "patients_data.json"
+    FILE_PATH = os.path.join("data", "patients_data.json")
 
     def __init__(self, name: str, patient_id: str, date_of_birth: str, phone_number: str, 
                  height: Optional[float] = None, weight: Optional[float] = None):
@@ -36,6 +36,10 @@ class Patient:
     @classmethod
     def _ensure_file_exists(cls) -> None:
         """Private method to ensure the JSON database file exists."""
+        dir_name = os.path.dirname(cls.FILE_PATH)
+        if dir_name and not os.path.exists(dir_name):
+            os.makedirs(dir_name, exist_ok=True)
+
         if not os.path.exists(cls.FILE_PATH):
             with open(cls.FILE_PATH, 'w') as file:
                 json.dump({}, file)

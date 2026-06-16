@@ -2,8 +2,15 @@ import json
 import os
 class StorageEngine:
     def __init__(self, kb_path="data/knowledge_base.json", diagnosis_path="data/diagnosis.json"):
-        self.kb_path =kb_path# the kb is a variable representing knowledge_bae
-        self.diagnosis_path= diagnosis_path
+        self.kb_path = kb_path  # the kb is a variable representing knowledge_base
+        self.diagnosis_path = diagnosis_path
+        self._ensure_data_dir()
+
+    def _ensure_data_dir(self):
+        for path in [self.kb_path, self.diagnosis_path]:
+            dir_name = os.path.dirname(path)
+            if dir_name and not os.path.exists(dir_name):
+                os.makedirs(dir_name, exist_ok=True)
 
     def load_knowledge_base(self):
         if not os.path.exists(self.kb_path):
