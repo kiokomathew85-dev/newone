@@ -6,7 +6,8 @@
         "role": "Admin"
     },
     {
-        "name": "Brian Karanja",
+        
+        "name": "Brian Karanja", 
         "doctor_id": "D202",
         "password": "b63390c4357346b88ff11e2ec225ea67$1fb66739fb02ca629b8d334fc000a8a2a4ab9bb0ab71608f6c9b2ecbf8723363",
         "role": "Admin"
